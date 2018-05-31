@@ -5,3 +5,4 @@ All changes can be found on the `changes` branch
 #### Changes
 
 * Add an `@` alias to the `src` directory
+* Add [csso-webpack-plugin](https://github.com/zoobestik/csso-webpack-plugin)
