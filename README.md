@@ -8,3 +8,4 @@ All changes can be found on the `changes` branch
 * Add [csso-webpack-plugin](https://github.com/zoobestik/csso-webpack-plugin)
 * Add PostCSS config and plugins
 * Add [babel-plugin-lodash](https://github.com/lodash/babel-plugin-lodash)
+* Add Sass support
