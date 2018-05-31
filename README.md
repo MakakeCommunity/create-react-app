@@ -3,3 +3,5 @@ This is a fork of [create-react-app](https://github.com/facebook/create-react-ap
 All changes can be found on the `changes` branch
 
 #### Changes
+
+* Add an `@` alias to the `src` directory
