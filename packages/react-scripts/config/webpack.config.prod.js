@@ -177,7 +177,13 @@ module.exports = {
               // @remove-on-eject-begin
               babelrc: false,
               presets: [require.resolve('babel-preset-react-app')],
-              plugins: [require.resolve('babel-plugin-lodash')],
+              plugins: [
+                require.resolve('babel-plugin-lodash'),
+                [
+                  require.resolve('babel-plugin-react-remove-properties'),
+                  { properties: ['data-testid'] },
+                ],
+              ],
               // @remove-on-eject-end
               compact: true,
             },
