@@ -30,6 +30,13 @@ const publicUrl = '';
 // Get environment variables to inject into our app.
 const env = getClientEnvironment(publicUrl);
 
+const babelPlugins = [require.resolve('babel-plugin-lodash')];
+if (!tenancy.isDefault)
+  babelPlugins.push([
+    require.resolve('@kicklox/babel-plugin-tenant-resolver'),
+    { tenant: tenancy.tenantName },
+  ]);
+
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
@@ -170,13 +177,7 @@ module.exports = {
               // @remove-on-eject-begin
               babelrc: false,
               presets: [require.resolve('babel-preset-react-app')],
-              plugins: [
-                require.resolve('babel-plugin-lodash'),
-                !tenancy.isDefault && [
-                  require.resolve('@kicklox/babel-plugin-tenant-resolver'),
-                  { tenant: tenancy.tenantName },
-                ],
-              ],
+              plugins: babelPlugins,
               // @remove-on-eject-end
               // This is a feature of `babel-loader` for webpack (not Babel itself).
               // It enables caching results in ./node_modules/.cache/babel-loader/

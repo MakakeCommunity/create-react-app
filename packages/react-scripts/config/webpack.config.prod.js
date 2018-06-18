@@ -55,6 +55,19 @@ const extractTextPluginOptions = shouldUseRelativeAssetPaths
     { publicPath: Array(cssFilename.split('/').length).join('../') }
   : {};
 
+const babelPlugins = [
+  require.resolve('babel-plugin-lodash'),
+  [
+    require.resolve('babel-plugin-react-remove-properties'),
+    { properties: ['data-testid'] },
+  ],
+];
+if (!tenancy.isDefault) {
+  babelPlugins.push([
+    require.resolve('@kicklox/babel-plugin-tenant-resolver'),
+    { tenant: tenancy.tenantName },
+  ]);
+}
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
@@ -178,17 +191,7 @@ module.exports = {
               // @remove-on-eject-begin
               babelrc: false,
               presets: [require.resolve('babel-preset-react-app')],
-              plugins: [
-                require.resolve('babel-plugin-lodash'),
-                [
-                  require.resolve('babel-plugin-react-remove-properties'),
-                  { properties: ['data-testid'] },
-                ],
-                !tenancy.isDefault && [
-                  require.resolve('@kicklox/babel-plugin-tenant-resolver'),
-                  { tenant: tenancy.tenantName },
-                ],
-              ],
+              plugins: babelPlugins,
               // @remove-on-eject-end
               compact: true,
             },
