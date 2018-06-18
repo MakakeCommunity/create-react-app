@@ -18,6 +18,7 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
+const tenancy = require('./tenant');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
@@ -169,7 +170,13 @@ module.exports = {
               // @remove-on-eject-begin
               babelrc: false,
               presets: [require.resolve('babel-preset-react-app')],
-              plugins: [require.resolve('babel-plugin-lodash')],
+              plugins: [
+                require.resolve('babel-plugin-lodash'),
+                !tenancy.isDefault && [
+                  require.resolve('@kicklox/babel-plugin-tenant-resolver'),
+                  { tenant: tenancy.tenantName },
+                ],
+              ],
               // @remove-on-eject-end
               // This is a feature of `babel-loader` for webpack (not Babel itself).
               // It enables caching results in ./node_modules/.cache/babel-loader/
@@ -202,6 +209,10 @@ module.exports = {
               },
               {
                 loader: require.resolve('sass-loader'),
+                options: {
+                  data: `@import "${tenancy.variablesFilename}";`,
+                  includePaths: [path.resolve(paths.appSrc, 'styles')],
+                },
               },
             ],
           },

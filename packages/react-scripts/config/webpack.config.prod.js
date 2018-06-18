@@ -20,6 +20,7 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
+const tenancy = require('./tenant');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -183,6 +184,10 @@ module.exports = {
                   require.resolve('babel-plugin-react-remove-properties'),
                   { properties: ['data-testid'] },
                 ],
+                !tenancy.isDefault && [
+                  require.resolve('@kicklox/babel-plugin-tenant-resolver'),
+                  { tenant: tenancy.tenantName },
+                ],
               ],
               // @remove-on-eject-end
               compact: true,
@@ -228,6 +233,10 @@ module.exports = {
                     },
                     {
                       loader: require.resolve('sass-loader'),
+                      options: {
+                        data: `@import "${tenancy.variablesFilename}";`,
+                        includePaths: [path.resolve(paths.appSrc, 'styles')],
+                      },
                     },
                   ],
                 },
