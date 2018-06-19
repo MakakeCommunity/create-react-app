@@ -18,3 +18,4 @@ All changes can be found on the `changes` branch
 - Multi Tenancy
   - Add [babel-plugin-tenant-resolver](https://github.com/MakakeCommunity/babel-plugin-tenant-resolver)
   - Add SASS Loader variables option
+- Disable cacheDirectory feature from babel-loader
