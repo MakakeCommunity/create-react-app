@@ -353,6 +353,7 @@ module.exports = {
     // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
     new ExtractTextPlugin({
       filename: cssFilename,
+      allChunks: true,
     }),
     new CssoWebpackPlugin(),
     // Generate a manifest file which contains a mapping of all asset filenames
