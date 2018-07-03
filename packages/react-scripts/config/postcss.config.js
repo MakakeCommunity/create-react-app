@@ -5,11 +5,9 @@ module.exports = ({ env }) => ({
   plugins: {
     'postcss-import': {},
     'postcss-calc': {},
-    'postcss-icss-values': {},
     'postcss-custom-properties': {},
     'postcss-cssnext': {},
     'postcss-flexbugs-fixes': {},
-    'postcss-font-magician': {},
     'postcss-color-function': {},
     cssnano:
       env === 'production'
