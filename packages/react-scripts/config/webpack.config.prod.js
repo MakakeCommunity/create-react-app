@@ -249,6 +249,36 @@ module.exports = {
             ),
             // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
           },
+          {
+            test: /\.svg$/,
+            use: [
+              {
+                loader: require.resolve('@svgr/webpack'),
+                options: {
+                  icon: true,
+                  svgAttributes: {
+                    fill: 'currentColor',
+                  },
+                  svgoConfig: {
+                    plugins: [
+                      { sortAttrs: true },
+                      { removeDimensions: true },
+                      { removeStyleElement: true },
+                      { convertColors: { currentColor: true } },
+                      { removeAttrs: { attrs: '(xmlns.*)' } },
+                    ],
+                  },
+                },
+              },
+              {
+                loader: require.resolve('url-loader'),
+                options: {
+                  limit: 10000,
+                  name: 'static/media/[name].[hash:8].[ext]',
+                },
+              },
+            ],
+          },
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.
           // This loader doesn't use a "test" so it will catch all modules
