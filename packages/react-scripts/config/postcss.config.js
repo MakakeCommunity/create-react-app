@@ -9,7 +9,7 @@ module.exports = ({ env }) => ({
     'postcss-custom-properties': {},
     'postcss-cssnext': {},
     'postcss-flexbugs-fixes': {},
-    'postcss-font-magician': env === 'production' ? false : {},
+    'postcss-font-magician': {},
     'postcss-color-function': {},
     cssnano:
       env === 'production'
