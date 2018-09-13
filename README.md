@@ -8,6 +8,7 @@ All changes can be found on the `changes` branch
 
 #### Changes
 
+- Add [graphql-tag](https://github.com/apollographql/graphql-tag)/loader
 - Add an `@` alias to the `src` directory
 - Add an `@` alias to the `src` directory (Jest)
 - Add [csso-webpack-plugin](https://github.com/zoobestik/csso-webpack-plugin)
