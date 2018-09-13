@@ -50,7 +50,6 @@ if (!tenancy.isDefault)
     require.resolve('@kicklox/babel-plugin-tenant-resolver'),
     { tenant: tenancy.tenantName, aliases: resolveAliases },
   ]);
-
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
@@ -111,7 +110,7 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx'],
+    extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.gql'],
     alias: resolveAliases,
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -180,6 +179,11 @@ module.exports = {
               plugins: babelPlugins,
               // @remove-on-eject-end
             },
+          },
+          {
+            test: /\.(graphql|gql)$/,
+            exclude: /node_modules/,
+            loader: 'graphql-tag/loader',
           },
           // "postcss" loader applies autoprefixer to our CSS.
           // "css" loader resolves paths in CSS and adds assets as dependencies.
