@@ -23,6 +23,7 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
 const paths = require('./paths');
+const tenancy = require('./tenant');
 const getClientEnvironment = require('./env');
 const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
@@ -55,7 +56,7 @@ const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
 // common function to get style loaders
-const getStyleLoaders = (cssOptions, preProcessor) => {
+const getStyleLoaders = (cssOptions, preProcessor, preProcessorOptions) => {
   const loaders = [
     {
       loader: MiniCssExtractPlugin.loader,
@@ -93,13 +94,46 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
   if (preProcessor) {
     loaders.push({
       loader: require.resolve(preProcessor),
-      options: {
-        sourceMap: shouldUseSourceMap,
-      },
+      options: Object.assign(
+        {},
+        {
+          sourceMap: shouldUseSourceMap,
+        },
+        preProcessorOptions
+      ),
     });
   }
   return loaders;
 };
+
+const resolveAliases = {
+  // Support React Native Web
+  // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
+  'react-native': 'react-native-web',
+  '@': paths.appSrc,
+};
+
+const babelPlugins = [
+  [
+    require.resolve('babel-plugin-named-asset-import'),
+    {
+      loaderMap: {
+        svg: {
+          ReactComponent:
+            '@svgr/webpack?{"icon":true,"svgAttributes":{"fill":"currentColor"},"svgoConfig":{"plugins":[{"sortAttrs":true},{"removeDimensions":true},{"removeStyleElement":true},{"convertColors":{"currentColor":true}},{"removeAttrs":{"attrs":"(xmlns.*)"}}]}}![path]',
+        },
+      },
+    },
+  ],
+  require.resolve('babel-plugin-lodash'),
+];
+
+if (!tenancy.isDefault) {
+  babelPlugins.push([
+    require.resolve('@kicklox/babel-plugin-tenant-resolver'),
+    { tenant: tenancy.tenantName, aliases: resolveAliases },
+  ]);
+}
 
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
@@ -215,12 +249,17 @@ module.exports = {
     // https://github.com/facebook/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.mjs', '.web.js', '.js', '.json', '.web.jsx', '.jsx'],
-    alias: {
-      // Support React Native Web
-      // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
-      'react-native': 'react-native-web',
-    },
+    extensions: [
+      '.mjs',
+      '.web.js',
+      '.js',
+      '.json',
+      '.web.jsx',
+      '.jsx',
+      '.graphql',
+      '.gql',
+    ],
+    alias: resolveAliases,
     plugins: [
       // Adds support for installing with Plug'n'Play, leading to faster installs and adding
       // guards against forgotten dependencies and such.
@@ -314,18 +353,7 @@ module.exports = {
                 'react-scripts',
               ]),
               // @remove-on-eject-end
-              plugins: [
-                [
-                  require.resolve('babel-plugin-named-asset-import'),
-                  {
-                    loaderMap: {
-                      svg: {
-                        ReactComponent: '@svgr/webpack?-prettier,-svgo![path]',
-                      },
-                    },
-                  },
-                ],
-              ],
+              plugins: babelPlugins,
               cacheDirectory: true,
               // Save disk space when time isn't as important
               cacheCompression: true,
@@ -408,7 +436,11 @@ module.exports = {
                 importLoaders: 2,
                 sourceMap: shouldUseSourceMap,
               },
-              'sass-loader'
+              'sass-loader',
+              {
+                data: `@import "${tenancy.variablesFilename}";`,
+                includePaths: [path.resolve(paths.appSrc, 'styles')],
+              }
             ),
             // Don't consider CSS imports dead code even if the
             // containing package claims to have no side effects.
@@ -429,6 +461,11 @@ module.exports = {
               },
               'sass-loader'
             ),
+          },
+          {
+            test: /\.(graphql|gql)$/,
+            exclude: /node_modules/,
+            loader: require.resolve('graphql-tag/loader'),
           },
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.
