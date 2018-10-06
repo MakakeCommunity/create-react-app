@@ -72,7 +72,7 @@ const getStyleLoaders = (cssOptions, preProcessor, preProcessorOptions) => {
   if (preProcessor) {
     loaders.push({
       loader: require.resolve(preProcessor),
-      options: preProcessorOptions
+      options: preProcessorOptions,
     });
   }
   return loaders;
@@ -148,7 +148,16 @@ module.exports = {
     // https://github.com/facebook/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.mjs', '.web.js', '.js', '.json', '.web.jsx', '.jsx'],
+    extensions: [
+      '.mjs',
+      '.web.js',
+      '.js',
+      '.json',
+      '.web.jsx',
+      '.jsx',
+      '.graphql',
+      '.gql',
+    ],
     alias: {
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
@@ -333,7 +342,7 @@ module.exports = {
             exclude: sassModuleRegex,
             use: getStyleLoaders(
               {
-                importLoaders: 2
+                importLoaders: 2,
               },
               'sass-loader',
               {
@@ -354,6 +363,11 @@ module.exports = {
               },
               'sass-loader'
             ),
+          },
+          {
+            test: /\.(graphql|gql)$/,
+            exclude: /node_modules/,
+            loader: require.resolve('graphql-tag/loader'),
           },
           // "file" loader makes sure those assets get served by WebpackDevServer.
           // When you `import` an asset, you get its (virtual) filename.
