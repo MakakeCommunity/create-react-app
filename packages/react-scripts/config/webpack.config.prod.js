@@ -20,6 +20,7 @@ const safePostCssParser = require('postcss-safe-parser');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
+const CssoWebpackPlugin = require('csso-webpack-plugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
 const paths = require('./paths');
@@ -126,6 +127,10 @@ const babelPlugins = [
     },
   ],
   require.resolve('babel-plugin-lodash'),
+  [
+    require.resolve('babel-plugin-react-remove-properties'),
+    { properties: ['data-testid'] },
+  ],
 ];
 
 if (!tenancy.isDefault) {
@@ -529,6 +534,7 @@ module.exports = {
       filename: 'static/css/[name].[contenthash:8].css',
       chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
     }),
+    new CssoWebpackPlugin(),
     // Generate a manifest file which contains a mapping of all asset filenames
     // to their corresponding output file so that tools can pick it up without
     // having to parse `index.html`.
