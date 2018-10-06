@@ -261,7 +261,8 @@ module.exports = {
                   {
                     loaderMap: {
                       svg: {
-                        ReactComponent: '@svgr/webpack?-prettier,-svgo![path]',
+                        ReactComponent:
+                          '@svgr/webpack?{"icon":true,"svgAttributes":{"fill":"currentColor"},"svgoConfig":{"plugins":[{"sortAttrs":true},{"removeDimensions":true},{"removeStyleElement":true},{"convertColors":{"currentColor":true}},{"removeAttrs":{"attrs":"(xmlns.*)"}}]}}![path]',
                       },
                     },
                   },
