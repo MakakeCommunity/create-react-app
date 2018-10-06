@@ -78,6 +78,35 @@ const getStyleLoaders = (cssOptions, preProcessor, preProcessorOptions) => {
   return loaders;
 };
 
+const resolveAliases = {
+  // Support React Native Web
+  // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
+  'react-native': 'react-native-web',
+  '@': paths.appSrc,
+};
+
+const babelPlugins = [
+  [
+    require.resolve('babel-plugin-named-asset-import'),
+    {
+      loaderMap: {
+        svg: {
+          ReactComponent:
+            '@svgr/webpack?{"icon":true,"svgAttributes":{"fill":"currentColor"},"svgoConfig":{"plugins":[{"sortAttrs":true},{"removeDimensions":true},{"removeStyleElement":true},{"convertColors":{"currentColor":true}},{"removeAttrs":{"attrs":"(xmlns.*)"}}]}}![path]',
+        },
+      },
+    },
+  ],
+  require.resolve('babel-plugin-lodash'),
+];
+
+if (!tenancy.isDefault) {
+  babelPlugins.push([
+    require.resolve('@kicklox/babel-plugin-tenant-resolver'),
+    { tenant: tenancy.tenantName, aliases: resolveAliases },
+  ]);
+}
+
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
@@ -158,12 +187,7 @@ module.exports = {
       '.graphql',
       '.gql',
     ],
-    alias: {
-      // Support React Native Web
-      // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
-      'react-native': 'react-native-web',
-      '@': paths.appSrc,
-    },
+    alias: resolveAliases,
     plugins: [
       // Adds support for installing with Plug'n'Play, leading to faster installs and adding
       // guards against forgotten dependencies and such.
@@ -255,19 +279,7 @@ module.exports = {
                 'react-scripts',
               ]),
               // @remove-on-eject-end
-              plugins: [
-                [
-                  require.resolve('babel-plugin-named-asset-import'),
-                  {
-                    loaderMap: {
-                      svg: {
-                        ReactComponent:
-                          '@svgr/webpack?{"icon":true,"svgAttributes":{"fill":"currentColor"},"svgoConfig":{"plugins":[{"sortAttrs":true},{"removeDimensions":true},{"removeStyleElement":true},{"convertColors":{"currentColor":true}},{"removeAttrs":{"attrs":"(xmlns.*)"}}]}}![path]',
-                      },
-                    },
-                  },
-                ],
-              ],
+              plugins: babelPlugins,
               // This is a feature of `babel-loader` for webpack (not Babel itself).
               // It enables caching results in ./node_modules/.cache/babel-loader/
               // directory for faster rebuilds.
