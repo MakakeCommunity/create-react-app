@@ -70,6 +70,10 @@ module.exports = (resolve, rootDir, isEjecting) => {
       'graphql',
       'gql',
     ],
+    watchPlugins: [
+      'jest-watch-typeahead/filename',
+      'jest-watch-typeahead/testname',
+    ],
   };
   if (rootDir) {
     config.rootDir = rootDir;
